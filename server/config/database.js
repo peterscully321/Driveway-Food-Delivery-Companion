@@ -130,12 +130,6 @@ memoryDb.order_status_history.push(
 );
 
 async function initDatabase() {
-  const host = process.env.DB_HOST || 'localhost';
-  const user = process.env.DB_USER || 'root';
-  const password = process.env.DB_PASSWORD || '';
-  const database = process.env.DB_NAME || 'driveway_db';
-  const port = process.env.DB_PORT || 3306;
-
   if (process.env.USE_MOCK_DB === 'true') {
     console.log('⚡ [Driveway DB] USE_MOCK_DB=true is enabled. Running Embedded Fast Memory Store.');
     isUsingMock = true;
@@ -143,22 +137,48 @@ async function initDatabase() {
   }
 
   try {
-    pool = mysql.createPool({
-      host,
-      user,
-      password,
-      database,
-      port,
-      waitForConnections: true,
-      connectionLimit: 10,
-      queueLimit: 0,
-      connectTimeout: 2000
-    });
+    // Support DATABASE_URL connection string (provided by Aiven, Railway, etc.)
+    if (process.env.DATABASE_URL) {
+      pool = mysql.createPool({
+        uri: process.env.DATABASE_URL,
+        waitForConnections: true,
+        connectionLimit: 10,
+        queueLimit: 0,
+        connectTimeout: 5000,
+        ssl: { rejectUnauthorized: true }
+      });
+    } else {
+      // Fallback to individual env vars
+      const host = process.env.DB_HOST || 'localhost';
+      const user = process.env.DB_USER || 'root';
+      const password = process.env.DB_PASSWORD || '';
+      const database = process.env.DB_NAME || 'driveway_db';
+      const port = process.env.DB_PORT || 3306;
+      const useSSL = process.env.DB_SSL === 'true';
+
+      const poolConfig = {
+        host,
+        user,
+        password,
+        database,
+        port,
+        waitForConnections: true,
+        connectionLimit: 10,
+        queueLimit: 0,
+        connectTimeout: 5000
+      };
+
+      if (useSSL) {
+        poolConfig.ssl = { rejectUnauthorized: true };
+      }
+
+      pool = mysql.createPool(poolConfig);
+    }
 
     const conn = await pool.getConnection();
     await conn.ping();
     conn.release();
-    console.log(`✅ [Driveway DB] Successfully connected to MySQL database: ${database}@${host}:${port}`);
+    console.log(`✅ [Driveway DB] Successfully connected to MySQL database`);
     isUsingMock = false;
   } catch (err) {
     console.warn(`⚠️ [Driveway DB] MySQL connection not established (${err.code || err.message}).`);
