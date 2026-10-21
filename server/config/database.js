@@ -144,8 +144,8 @@ async function initDatabase() {
         waitForConnections: true,
         connectionLimit: 10,
         queueLimit: 0,
-        connectTimeout: 5000,
-        ssl: { rejectUnauthorized: true }
+        connectTimeout: 10000,
+        ssl: { rejectUnauthorized: false }
       });
     } else {
       // Fallback to individual env vars
@@ -165,11 +165,11 @@ async function initDatabase() {
         waitForConnections: true,
         connectionLimit: 10,
         queueLimit: 0,
-        connectTimeout: 5000
+        connectTimeout: 10000
       };
 
       if (useSSL) {
-        poolConfig.ssl = { rejectUnauthorized: true };
+        poolConfig.ssl = { rejectUnauthorized: false };
       }
 
       pool = mysql.createPool(poolConfig);

@@ -1,6 +1,6 @@
 /**
  * MySQL Seed Runner Script for Driveway Food Ordering System
- * Executes schema.sql and seed.sql against the configured MySQL server.
+ * Executes schema.sql and seed.sql against any local or cloud MySQL instance (including Aiven).
  */
 
 const mysql = require('mysql2/promise');
@@ -8,37 +8,78 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
-async function runSeed() {
-  const host = process.env.DB_HOST || 'localhost';
-  const user = process.env.DB_USER || 'root';
-  const password = process.env.DB_PASSWORD || '';
-  const port = process.env.DB_PORT || 3306;
+function sanitizeSqlForTargetDb(sqlText) {
+  // Strip CREATE DATABASE and USE statements so it applies to the currently connected DB (e.g. defaultdb on Aiven)
+  return sqlText
+    .replace(/CREATE\s+DATABASE\s+IF\s+NOT\s+EXISTS\s+[^;]+;/gi, '-- [Skipped CREATE DATABASE for cloud DB]')
+    .replace(/USE\s+[^;]+;/gi, '-- [Skipped USE database for cloud DB]');
+}
 
-  console.log(`Connecting to MySQL at ${host}:${port} as ${user}...`);
+async function runSeed() {
+  const cliUri = process.argv[2];
+  const databaseUrl = cliUri || process.env.DATABASE_URL;
+
+  let connection;
 
   try {
-    const connection = await mysql.createConnection({
-      host,
-      user,
-      password,
-      port,
-      multipleStatements: true
-    });
+    if (databaseUrl) {
+      console.log('Connecting to Cloud MySQL database via connection string...');
+      connection = await mysql.createConnection({
+        uri: databaseUrl,
+        multipleStatements: true,
+        ssl: { rejectUnauthorized: false }
+      });
+    } else {
+      const host = process.env.DB_HOST || 'localhost';
+      const user = process.env.DB_USER || 'root';
+      const password = process.env.DB_PASSWORD || '';
+      const database = process.env.DB_NAME || 'driveway_db';
+      const port = Number(process.env.DB_PORT) || 3306;
+      const useSSL = process.env.DB_SSL === 'true';
 
-    console.log('Connected! Executing schema.sql...');
-    const schemaSql = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf-8');
+      console.log(`Connecting to MySQL at ${host}:${port} as ${user}...`);
+
+      const config = {
+        host,
+        user,
+        password,
+        database,
+        port,
+        multipleStatements: true
+      };
+
+      if (useSSL) {
+        config.ssl = { rejectUnauthorized: false };
+      }
+
+      connection = await mysql.createConnection(config);
+    }
+
+    console.log(' Connected to MySQL successfully!');
+
+    console.log(' Executing schema.sql (creating tables, indexes & relations)...');
+    let schemaSql = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf-8');
+    schemaSql = sanitizeSqlForTargetDb(schemaSql);
     await connection.query(schemaSql);
-    console.log('Schema created successfully.');
+    console.log(' Schema tables created successfully.');
 
-    console.log('Executing seed.sql...');
-    const seedSql = fs.readFileSync(path.join(__dirname, 'seed.sql'), 'utf-8');
+    console.log(' Executing seed.sql (inserting categories, burgers, pizzas, coupons)...');
+    let seedSql = fs.readFileSync(path.join(__dirname, 'seed.sql'), 'utf-8');
+    seedSql = sanitizeSqlForTargetDb(seedSql);
     await connection.query(seedSql);
-    console.log('Seed data inserted successfully.');
+    console.log(' Seed data inserted successfully.');
+
+    // Quick verification count
+    const [rows] = await connection.query('SELECT COUNT(*) as count FROM menu_items');
+    console.log(`\n Database verification: ${rows[0].count} menu items ready!`);
+    console.log(' Driveway MySQL Database is 100% initialized and live.\n');
 
     await connection.end();
-    console.log('MySQL Database initialization completed with 100% success!');
   } catch (err) {
-    console.error('Failed to run MySQL seed:', err.message);
+    console.error('\n Failed to run MySQL seed:', err.message);
+    if (connection) {
+      try { await connection.end(); } catch (e) {}
+    }
     process.exit(1);
   }
 }
