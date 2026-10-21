@@ -15,9 +15,15 @@ function sanitizeSqlForTargetDb(sqlText) {
     .replace(/USE\s+[^;]+;/gi, '-- [Skipped USE database for cloud DB]');
 }
 
+function cleanDatabaseUrl(rawUrl) {
+  if (!rawUrl) return rawUrl;
+  return rawUrl.replace(/\?ssl-mode=[^&]*/i, '');
+}
+
 async function runSeed() {
   const cliUri = process.argv[2];
-  const databaseUrl = cliUri || process.env.DATABASE_URL;
+  const rawDatabaseUrl = cliUri || process.env.DATABASE_URL;
+  const databaseUrl = cleanDatabaseUrl(rawDatabaseUrl);
 
   let connection;
 

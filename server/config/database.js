@@ -139,8 +139,9 @@ async function initDatabase() {
   try {
     // Support DATABASE_URL connection string (provided by Aiven, Railway, etc.)
     if (process.env.DATABASE_URL) {
+      const cleanUri = process.env.DATABASE_URL.replace(/\?ssl-mode=[^&]*/i, '');
       pool = mysql.createPool({
-        uri: process.env.DATABASE_URL,
+        uri: cleanUri,
         waitForConnections: true,
         connectionLimit: 10,
         queueLimit: 0,
