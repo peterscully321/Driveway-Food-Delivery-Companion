@@ -1,0 +1,341 @@
+/* Real-Time Order Tracking Page Styles */
+.track-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+.track-header-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-lg);
+}
+
+.order-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.order-number-title {
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.live-indicator.active {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--accent-green);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.pulse-green {
+  width: 7px;
+  height: 7px;
+  background: var(--accent-green);
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+.vehicle-bay-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  padding: 0.4rem 0.9rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.vehicle-bay-chip strong {
+  color: var(--accent-gold);
+}
+
+/* Estimated Timer Card */
+.eta-timer-box {
+  background: rgba(10, 12, 16, 0.7);
+  border: 1px solid var(--border-glow);
+  padding: 1.2rem 1.8rem;
+  border-radius: 16px;
+  text-align: center;
+  min-width: 190px;
+}
+
+.eta-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.eta-countdown {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--accent-gold);
+  line-height: 1.2;
+}
+
+/* Status Progression Stepper */
+.stepper-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.stepper-card h3 {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stepper-timeline {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-bottom: 2.5rem;
+}
+
+.stepper-line-bg {
+  position: absolute;
+  top: 24px;
+  left: 30px;
+  right: 30px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  z-index: 1;
+}
+
+.stepper-line-fill {
+  position: absolute;
+  top: 24px;
+  left: 30px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent-amber), var(--accent-gold));
+  z-index: 2;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 12px var(--accent-gold);
+}
+
+.step-node {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 120px;
+}
+
+.step-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: var(--text-dim);
+  transition: all 0.4s ease;
+  margin-bottom: 0.6rem;
+}
+
+.step-node.active .step-circle {
+  border-color: var(--accent-amber);
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--accent-gold);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+  transform: scale(1.1);
+}
+
+.step-node.completed .step-circle {
+  background: var(--accent-amber);
+  border-color: var(--accent-amber);
+  color: #000;
+}
+
+.step-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+
+.step-node.active .step-title {
+  color: var(--accent-gold);
+}
+
+.step-node.completed .step-title {
+  color: var(--text-main);
+}
+
+/* Radar & Bay Simulation Visualizer */
+.radar-bay-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 1.8rem;
+  margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.bay-map-visual {
+  background: #0d1117;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 1.2rem;
+  position: relative;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.bay-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 1rem;
+}
+
+.bay-slot {
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 0.6rem 0.3rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.bay-slot.occupied {
+  border: 1px solid var(--accent-gold);
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--accent-gold);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+  animation: slotGlow 2s infinite alternate;
+}
+
+@keyframes slotGlow {
+  from { opacity: 0.8; }
+  to { opacity: 1; }
+}
+
+/* Timeline Activity Stream */
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.timeline-entry {
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 3px solid var(--accent-amber);
+  border-radius: 4px 8px 8px 4px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+.timeline-entry-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+
+.timeline-time {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.timeline-notes {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* Demo Simulation Controls */
+.demo-control-bar {
+  background: rgba(6, 182, 212, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  border-radius: 14px;
+  padding: 1rem 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.demo-btn {
+  background: var(--accent-cyan);
+  border: none;
+  color: #042f2e;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.demo-btn:hover {
+  box-shadow: 0 0 15px var(--accent-cyan-glow);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .stepper-timeline {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .stepper-line-bg, .stepper-line-fill {
+    display: none;
+  }
+  .step-node {
+    flex-direction: row;
+    width: 100%;
+    text-align: left;
+    gap: 1rem;
+  }
+  .radar-bay-card {
+    grid-template-columns: 1fr;
+  }
+}

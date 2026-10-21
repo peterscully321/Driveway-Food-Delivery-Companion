@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Order Tracking — Driveway</title>
+  <meta name="description" content="Real-time order tracking with Server-Sent Events, stage progression, and bay delivery radar.">
+
+  <!-- Google Fonts: Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/track.css">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="navbar">
+    <a href="/" class="brand">
+      <div class="brand-logo-icon">⚡</div>
+      <div>
+        <div class="brand-title">DRIVEWAY</div>
+        <div class="brand-tag">Live Order Telemetry</div>
+      </div>
+    </a>
+
+    <div class="nav-actions">
+      <a href="/" class="nav-link-btn">
+        <span>← Menu & Order</span>
+      </a>
+      <a href="/kitchen" class="nav-link-btn">
+        <span>👨‍🍳 Kitchen KDS</span>
+      </a>
+    </div>
+  </header>
+
+  <div class="track-container" id="track-content-body">
+
+    <!-- Interactive Simulation Banner for Demo -->
+    <div class="demo-control-bar">
+      <div>
+        <strong style="color: var(--accent-cyan);">🔬 Live Demo Simulation:</strong>
+        <span style="font-size: 0.85rem; color: var(--text-muted); margin-left: 0.4rem;">
+          Test the real-time SSE stream! Click to advance the kitchen status:
+        </span>
+      </div>
+      <button class="demo-btn" id="simulate-advance-btn">
+        Simulate Next Kitchen Stage ⏭️
+      </button>
+    </div>
+
+    <!-- Header Card -->
+    <div class="track-header-card">
+      <div>
+        <div class="order-badge-row">
+          <h1 class="order-number-title" id="track-order-num">DW-8842</h1>
+          <span class="live-indicator active" id="live-conn-badge">
+            <span class="pulse-green"></span> LIVE CONNECTED
+          </span>
+        </div>
+        <div style="display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.4rem;">
+          <div class="vehicle-bay-chip">
+            <span>Designated Spot:</span>
+            <strong id="track-bay-num">Bay #4</strong>
+          </div>
+          <div class="vehicle-bay-chip">
+            <span>Vehicle:</span>
+            <strong id="track-vehicle-info">Tesla Model 3</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- ETA Countdown Card -->
+      <div class="eta-timer-box">
+        <div class="eta-label">Estimated Wait</div>
+        <div class="eta-countdown" id="eta-countdown-val">10:45</div>
+        <div style="font-size: 0.72rem; color: var(--text-dim); margin-top: 2px;">mins remaining</div>
+      </div>
+    </div>
+
+    <!-- Live Progression Stepper -->
+    <div class="stepper-card">
+      <h3>
+        <span>Live Dispatch Status</span>
+        <span id="current-status-desc" style="font-size: 0.85rem; color: var(--accent-gold); font-weight: 500;">
+          Chefs are flame-grilling your patties!
+        </span>
+      </h3>
+
+      <div class="stepper-timeline">
+        <div class="stepper-line-bg"></div>
+        <div class="stepper-line-fill" id="stepper-fill-bar" style="width: 50%;"></div>
+
+        <!-- 5 Steps -->
+        <div class="step-node completed" id="step-node-placed">
+          <div class="step-circle">📝</div>
+          <div class="step-title">Order Placed</div>
+        </div>
+
+        <div class="step-node completed" id="step-node-confirmed">
+          <div class="step-circle">👨‍🍳</div>
+          <div class="step-title">Kitchen Confirmed</div>
+        </div>
+
+        <div class="step-node active" id="step-node-preparing">
+          <div class="step-circle">🔥</div>
+          <div class="step-title">Cooking</div>
+        </div>
+
+        <div class="step-node" id="step-node-ready_at_bay">
+          <div class="step-circle">🚗</div>
+          <div class="step-title">Ready at Bay</div>
+        </div>
+
+        <div class="step-node" id="step-node-completed">
+          <div class="step-circle">🎉</div>
+          <div class="step-title">Fulfilled</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bay Radar Map & Timeline Grid -->
+    <div class="radar-bay-card">
+      
+      <!-- Bay Layout Visualizer -->
+      <div class="bay-map-visual">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <strong style="font-family: var(--font-heading); font-size: 1rem;">Driveway Bay Radar Map</strong>
+            <span style="font-size: 0.75rem; color: var(--accent-green); font-weight: 700;">All sensors online</span>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 0.2rem;">
+            Assigned parking stall for express drive-thru delivery.
+          </p>
+        </div>
+
+        <div class="bay-grid" id="bay-slots-grid">
+          <!-- Bay 1 to 8 rendered here -->
+        </div>
+
+        <div style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 0.8rem;">
+          Please remain seated in your vehicle. Food runner will arrive at your designated bay window.
+        </div>
+      </div>
+
+      <!-- Live Audit Stream & Receipt -->
+      <div>
+        <h4 style="font-family: var(--font-heading); margin-bottom: 0.8rem; display: flex; justify-content: space-between;">
+          <span>Activity Audit Log</span>
+          <span style="font-size: 0.78rem; color: var(--text-dim);">Real-Time MySQL Event Log</span>
+        </h4>
+        <div class="timeline-list" id="timeline-list-container">
+          <!-- Timeline entries rendered here -->
+        </div>
+
+        <h4 style="font-family: var(--font-heading); margin: 1.2rem 0 0.5rem 0;">Order Summary</h4>
+        <div id="track-items-summary" style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 0.8rem;">
+          <!-- Item breakdown rendered here -->
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="/js/audio.js"></script>
+  <script src="/js/track.js"></script>
+</body>
+</html>

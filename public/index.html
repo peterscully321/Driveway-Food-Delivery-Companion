@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Driveway — Next-Gen Voice & Real-Time Food Ordering Platform</title>
+  <meta name="description" content="Driveway - Full-stack food ordering platform featuring voice AI input, relational MySQL backend, and real-time order tracking.">
+
+  <!-- Google Fonts: Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <a href="/" class="brand">
+      <div class="brand-logo-icon">⚡</div>
+      <div>
+        <div class="brand-title">DRIVEWAY</div>
+        <div class="brand-tag">Smart Food Platform</div>
+      </div>
+    </a>
+
+    <!-- Menu Search Input -->
+    <div class="nav-search">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="menu-search-input" placeholder="Search burgers, stone-baked pizzas, shakes, combos...">
+    </div>
+
+    <!-- Navigation Action Links -->
+    <div class="nav-actions">
+      <button class="voice-nav-btn" id="voice-nav-btn" title="Speak to Order">
+        <span class="pulse-dot"></span>
+        <span>🎙️ Voice Order</span>
+      </button>
+
+      <a href="/kitchen" class="nav-link-btn" title="Open Kitchen Display System">
+        <span>👨‍🍳 Kitchen KDS</span>
+      </a>
+
+      <a href="/track?order=DW-8842" class="nav-link-btn" title="Track Recent Order">
+        <span>📡 Tracker</span>
+      </a>
+
+      <button class="cart-nav-btn" id="cart-nav-btn">
+        <span>🛒 Cart</span>
+        <span class="cart-count-badge" style="display: none;">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main View Container -->
+  <main class="main-content">
+
+    <!-- Hero Drive-Thru Welcome Banner -->
+    <section class="hero-banner">
+      <div class="hero-text">
+        <h1>Artisan Food. <span>Voice-Ordered.</span><br>Delivered Straight to Your Bay.</h1>
+        <p>Experience seamless drive-thru ordering with real-time audio NLP and live kitchen telemetry tracking powered by MySQL.</p>
+        
+        <!-- Quick Voice Command Suggestions -->
+        <div class="voice-command-chips">
+          <span class="chips-label">Try Voice:</span>
+          <button class="chip-btn" onclick="VoiceAssistant.openVoiceModal(); VoiceAssistant.handleVoiceCommand('Add 2 Smokehouse Burgers');">
+            🗣️ "Add 2 Smokehouse Burgers"
+          </button>
+          <button class="chip-btn" onclick="VoiceAssistant.openVoiceModal(); VoiceAssistant.handleVoiceCommand('Add 1 Pepperoni Pizza and 1 Berry Lemonade');">
+            🗣️ "1 Pepperoni Pizza & Berry Lemonade"
+          </button>
+          <button class="chip-btn" onclick="VoiceAssistant.openVoiceModal(); VoiceAssistant.handleVoiceCommand('Apply coupon DRIVEWAY20');">
+            🏷️ "Apply coupon DRIVEWAY20"
+          </button>
+        </div>
+      </div>
+
+      <!-- Driveway Bay Radar Status -->
+      <div class="hero-bay-indicator">
+        <div class="bay-label">Assigned Bay</div>
+        <div class="bay-val">BAY #4</div>
+        <div class="bay-status">
+          <span class="pulse-green"></span>
+          <span>Ultrasonic Sensor Active</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Category Filter & Diet Options -->
+    <section class="category-filter-bar">
+      <div class="category-pills" id="category-pills-wrap">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="filter-toggles">
+        <label class="veg-toggle-label">
+          <input type="checkbox" id="veg-only-toggle">
+          <span class="toggle-slider"></span>
+          <span>🌱 Veg Only</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- Food Menu Grid -->
+    <section class="menu-grid" id="menu-items-grid">
+      <!-- Menu cards injected dynamically via JavaScript -->
+      <div style="grid-column: 1/-1; text-align: center; padding: 3rem 0; color: var(--text-muted);">
+        Loading artisan food catalog...
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Voice Assistant Floating Modal -->
+  <div class="voice-modal-backdrop" id="voice-modal-backdrop">
+    <div class="voice-modal">
+      <button class="modal-close-btn" id="voice-close-btn">&times;</button>
+      
+      <div class="voice-mic-container">
+        <div class="mic-circle" id="modal-mic-circle">🎙️</div>
+      </div>
+
+      <!-- Audio wave animation -->
+      <div class="wave-bars" id="voice-wave-bars">
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+      </div>
+
+      <h2 class="voice-status-title" id="voice-status-title">Listening to your order...</h2>
+      
+      <!-- Speech Transcript box -->
+      <div class="voice-transcript-box" id="voice-transcript-text">
+        "Say what you want: e.g. 'Add 2 Angus Burgers and a shake'"
+      </div>
+
+      <div class="voice-feedback-msg" id="voice-feedback-text"></div>
+
+      <!-- Fallback manual input for browsers without mic -->
+      <div class="voice-manual-input">
+        <input type="text" id="voice-text-input" placeholder="Or type your voice order here...">
+        <button id="voice-text-send-btn">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Slide-Over Drawer -->
+  <div class="cart-drawer-backdrop" id="cart-drawer-backdrop">
+    <div class="cart-drawer">
+      <div class="cart-header">
+        <h2>Your Driveway Order</h2>
+        <button class="modal-close-btn" id="cart-close-btn">&times;</button>
+      </div>
+
+      <!-- Items List -->
+      <div class="cart-items-container" id="cart-items-list">
+        <!-- Injected via cart.js -->
+      </div>
+
+      <!-- Bill & Checkout Summary -->
+      <div class="cart-summary" id="cart-summary-box">
+        <div class="coupon-row">
+          <input type="text" id="coupon-input" placeholder="Promo code (e.g. DRIVEWAY20)">
+          <button id="apply-coupon-btn">Apply</button>
+        </div>
+
+        <div class="bill-line">
+          <span>Subtotal</span>
+          <span id="bill-subtotal">$0.00</span>
+        </div>
+
+        <div class="bill-line discount" id="bill-discount-row" style="display: none;">
+          <span>Discount</span>
+          <span id="bill-discount">-$0.00</span>
+        </div>
+
+        <div class="bill-line">
+          <span>Estimated Tax (8%)</span>
+          <span id="bill-tax">$0.00</span>
+        </div>
+
+        <div class="bill-total">
+          <span>Total</span>
+          <span id="bill-total-amount" style="color: var(--accent-gold);">$0.00</span>
+        </div>
+
+        <button class="checkout-btn" id="open-checkout-btn">
+          Proceed to Bay Checkout →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkout Information Modal -->
+  <div class="checkout-modal-backdrop" id="checkout-modal-backdrop">
+    <div class="checkout-modal">
+      <button class="modal-close-btn" id="checkout-modal-close-btn">&times;</button>
+      <h2 style="font-family: var(--font-heading); margin-bottom: 0.4rem;">Drive-Thru Bay Details</h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.2rem;">
+        Provide your details so our kitchen can dispatch the food directly to your vehicle spot.
+      </p>
+
+      <div id="checkout-modal-summary"></div>
+
+      <form id="checkout-order-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cust-name">Full Name *</label>
+            <input type="text" id="cust-name" required placeholder="Alex Sterling" value="Alex Sterling">
+          </div>
+          <div class="form-group">
+            <label for="cust-phone">Phone Number *</label>
+            <input type="tel" id="cust-phone" required placeholder="+1 555-0192" value="+1 555-0192">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cust-bay">Assigned Bay *</label>
+            <select id="cust-bay" required>
+              <option value="1">Bay #1 (Lane North)</option>
+              <option value="2">Bay #2 (Lane North)</option>
+              <option value="3">Bay #3 (Express Pick)</option>
+              <option value="4" selected>Bay #4 (Main Pitstop)</option>
+              <option value="5">Bay #5 (Lane South)</option>
+              <option value="6">Bay #6 (Lane South)</option>
+              <option value="7">Bay #7 (Curbside VIP)</option>
+              <option value="8">Bay #8 (EV Charging Bay)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="cust-payment">Payment Method *</label>
+            <select id="cust-payment">
+              <option value="cash_on_pickup">Cash at Bay Window</option>
+              <option value="card" selected>Credit / Debit Card</option>
+              <option value="upi">UPI / Instant QR</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cust-model">Vehicle Model</label>
+            <input type="text" id="cust-model" placeholder="Grey Tesla Model 3" value="Matte Grey Tesla Model 3">
+          </div>
+          <div class="form-group">
+            <label for="cust-plate">License Plate</label>
+            <input type="text" id="cust-plate" placeholder="7XYZ892" value="7XYZ892">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="cust-notes">Special Kitchen Instructions</label>
+          <textarea id="cust-notes" rows="2" placeholder="e.g. Extra napkins, no pickles, sauce on side..."></textarea>
+        </div>
+
+        <button type="submit" class="checkout-btn" id="confirm-order-submit-btn">
+          Confirm & Place Driveway Order 🚗
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Notification Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Frontend Scripts -->
+  <script src="/js/audio.js"></script>
+  <script src="/js/cart.js"></script>
+  <script src="/js/voice.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

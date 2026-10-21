@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kitchen Display System (KDS) — Driveway</title>
+  <meta name="description" content="Driveway Kitchen Display System - Real-time order management and bay dispatch.">
+
+  <!-- Google Fonts: Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/kitchen.css">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="navbar">
+    <a href="/" class="brand">
+      <div class="brand-logo-icon">👨‍🍳</div>
+      <div>
+        <div class="brand-title">DRIVEWAY KDS</div>
+        <div class="brand-tag">Kitchen Operations Terminal</div>
+      </div>
+    </a>
+
+    <div class="nav-actions">
+      <a href="/" class="nav-link-btn">
+        <span>🍔 Customer Menu</span>
+      </a>
+      <a href="/track?order=DW-8842" class="nav-link-btn">
+        <span>📡 Customer Tracker</span>
+      </a>
+    </div>
+  </header>
+
+  <div class="kitchen-container">
+    
+    <div class="kds-header">
+      <div class="kds-title-wrap">
+        <h1>Kitchen Order Pipeline <span style="font-size: 1rem; color: var(--accent-green); font-weight: 600;">● Active</span></h1>
+      </div>
+
+      <div class="kds-stats-strip">
+        <div class="kds-stat-card">
+          <div class="kds-stat-num" id="stat-active-orders">0</div>
+          <div class="kds-stat-label">Active Orders</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kanban Board -->
+    <div class="kds-board">
+      
+      <!-- Column 1: Placed / Confirmed -->
+      <div class="kds-column col-placed">
+        <div class="kds-column-header">
+          <span>🔔 NEW ORDERS</span>
+          <span class="column-counter" id="count-placed">0</span>
+        </div>
+        <div class="kds-ticket-list" id="kds-list-placed">
+          <!-- Injected via kitchen.js -->
+        </div>
+      </div>
+
+      <!-- Column 2: In Kitchen / Preparing -->
+      <div class="kds-column col-prep">
+        <div class="kds-column-header">
+          <span>🔥 COOKING ON GRILL</span>
+          <span class="column-counter" id="count-prep">0</span>
+        </div>
+        <div class="kds-ticket-list" id="kds-list-prep">
+          <!-- Injected via kitchen.js -->
+        </div>
+      </div>
+
+      <!-- Column 3: Ready at Bay -->
+      <div class="kds-column col-ready">
+        <div class="kds-column-header">
+          <span>🚗 READY AT BAY</span>
+          <span class="column-counter" id="count-ready">0</span>
+        </div>
+        <div class="kds-ticket-list" id="kds-list-ready">
+          <!-- Injected via kitchen.js -->
+        </div>
+      </div>
+
+      <!-- Column 4: Completed -->
+      <div class="kds-column col-done">
+        <div class="kds-column-header">
+          <span>✅ COMPLETED</span>
+          <span class="column-counter" id="count-done">0</span>
+        </div>
+        <div class="kds-ticket-list" id="kds-list-done">
+          <!-- Injected via kitchen.js -->
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="/js/audio.js"></script>
+  <script src="/js/kitchen.js"></script>
+</body>
+</html>

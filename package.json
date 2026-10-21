@@ -1,0 +1,27 @@
+{
+  "name": "driveway-food-ordering",
+  "version": "1.0.0",
+  "description": "Driveway - Full-Stack Food Ordering Platform with Voice & Text Input and Real-time Order Tracking",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "seed": "node server/db/seedRunner.js"
+  },
+  "keywords": [
+    "food-ordering",
+    "voice-ordering",
+    "real-time-tracking",
+    "mysql",
+    "express",
+    "web-speech-api"
+  ],
+  "author": "Yash Gupta",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mysql2": "^3.9.7"
+  }
+}
