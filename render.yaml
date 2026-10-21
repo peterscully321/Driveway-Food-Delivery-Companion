@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: driveway-food-delivery
+    runtime: node
+    region: oregon
+    plan: free
+    buildCommand: npm install
+    startCommand: node server/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: USE_MOCK_DB
+        value: true
+      - key: PORT
+        value: 10000
