@@ -7,6 +7,8 @@
 [![Real-Time](https://img.shields.io/badge/Streaming-Server--Sent%20Events%20(SSE)-06B6D4)](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events)
 [![Voice AI](https://img.shields.io/badge/Voice%20AI-Web%20Speech%20API%20%2B%20NLP-F59E0B)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API)
 
+**Live demo:** [driveway-food-delivery-companion.onrender.com](https://driveway-food-delivery-companion.onrender.com/) — hosted on Render's free plan, so the first load after a period of inactivity can take up to a minute.
+
 > **Resume Project Specification:**
 > - **Driveway – Food Ordering System** | *JavaScript, HTML, CSS, MySQL*
 > - Built a full-stack food ordering platform with voice and text input and real-time order tracking.
